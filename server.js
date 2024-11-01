@@ -46,6 +46,12 @@ app.use(cookieParser()); // Разбор cookie в запросах
 app.use(express.static('public')); // Определение папки 'public' для статических файлов (например, изображения, CSS, JS)
 app.use(morgan(loggerFormat)); // Используем morgan как middleware
 
+// Функция для загрузки продуктов из JSON файла
+const loadProducts = () => {
+    const data = fs.readFileSync('products.json');
+    return JSON.parse(data);
+};
+
 // Создание базы данных и таблицы заказов
 const db = new sqlite3.Database('./orders.db', (err) => {
     if (err) {
@@ -59,6 +65,30 @@ const db = new sqlite3.Database('./orders.db', (err) => {
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
         )`);
     }
+});
+
+// Эндпоинт для получения характеристик продукта
+app.get('/api/products/:id', (req, res) => {
+    const { id } = req.params;
+    const products = loadProducts();
+    const product = products.find(p => p.id === id);
+    if (product) {
+        res.json(product);
+    } else {
+        res.status(404).send("Продукт не найден.");
+    }
+});
+
+// Обработка GET-запроса для получения списка товаров
+app.get('/api/products', (req, res) => {
+    // Чтение файла products.json, содержащего данные о товарах
+    fs.readFile('products.json', 'utf-8', (err, data) => {
+        if (err) {
+            console.log(chalk.red("Ошибка чтения данных о продуктах", err)); // Логируем ошибку чтения
+            return res.status(500).send('Ошибка чтения данных о продуктах'); // Ответ клиенту при ошибке
+        }
+        res.send(data); // Отправляем данные о товарах клиенту
+    });
 });
 
 // Обработка заказа
@@ -80,84 +110,53 @@ app.post('/api/place-order', (req, res) => {
     });
 });
 
-// Функция для загрузки продуктов из JSON файла
-const loadProducts = () => {
-    const data = fs.readFileSync('products.json');
-    return JSON.parse(data);
-};
+// Обработка POST-запроса для обновления рейтинга продукта
+app.post('/api/rate', (req, res) => {
+    const { productId, rating } = req.body; // Извлечение данных из тела запроса
 
-// Эндпоинт для получения характеристик продукта
-app.get('/api/products/:id', (req, res) => {
-    const { id } = req.params;
-    const products = loadProducts();
-    const product = products.find(p => p.id === id);
-    if (product) {
-        console.log(product);
-        res.json(product);
-    } else {
-        res.status(404).send("Продукт не найден.");
+    // Проверка валидности входных данных
+    if (typeof productId !== 'number' || typeof rating !== 'number') {
+        return res.status(400).send('Некорректные данные рейтинга'); // Проверка данные
     }
-});
 
-// Обработка GET-запроса для получения списка товаров
-app.get('/api/products', (req, res) => {
-    // Чтение файла products.json, содержащего данные о товарах
+    // Получение идентификатора пользователя из cookie или генерация нового, если он отсутствует
+    const userId = req.cookies.userId || generateUniqueUserId();
+
+    // Чтение файла products.json, чтобы получить текущие данные о товарах
     fs.readFile('products.json', 'utf-8', (err, data) => {
         if (err) {
             console.log(chalk.red("Ошибка чтения данных о продуктах", err)); // Логируем ошибку чтения
             return res.status(500).send('Ошибка чтения данных о продуктах'); // Ответ клиенту при ошибке
         }
-        res.send(data); // Отправляем данные о товарах клиенту
+
+        const products = JSON.parse(data); // Преобразование данных из JSON-строки в объект JavaScript
+        const product = products.find(p => p.id === productId); // Поиск товара по идентификатору
+
+        if (!product) return res.status(404).send('Продукт не найден'); // Если продукт не найден
+
+        // Проверка, голосовал ли пользователь за этот продукт ранее
+        if (!req.cookies[`rated_${productId}`]) {
+            product.votes++; // Увеличение общего количества голосов
+            // Пересчет рейтинга
+            product.rating = ((product.rating * (product.votes - 1)) + rating) / product.votes;
+
+            // Запись обновленных данных о товарах обратно в файл
+            fs.writeFile('products.json', JSON.stringify(products, null, 2), (err) => { // Форматирование JSON для удобства
+                if (err) {
+                    console.log(chalk.red("Ошибка сохранения данных о продукте", err)); // Логируем ошибку сохранения данных
+                    return res.status(500).send('Ошибка сохранения данных о продукте'); // Ответ клиенту при ошибке
+                }
+
+                // Установка cookie, чтобы запомнить, что пользователь уже проголосовал за этот продукт
+                res.cookie(`rated_${productId}`, true, { maxAge: 86400 * 1000 }); // Действие cookie 1 сутки
+                res.send(product); // Отправка обновленных данных о продукте клиенту
+            });
+        } else {
+            // Если пользователь уже проголосовал, отправляем статус 403 (доступ запрещен)
+            res.status(403).send('Пользователь уже проголосовал за этот продукт');
+        }
     });
 });
-
-    // Обработка POST-запроса для обновления рейтинга продукта
-    app.post('/api/rate', (req, res) => {
-        const { productId, rating } = req.body; // Извлечение данных из тела запроса
-    
-        // Проверка валидности входных данных
-        if (typeof productId !== 'number' || typeof rating !== 'number') {
-            return res.status(400).send('Некорректные данные рейтинга'); // Проверка данные
-        }
-    
-        // Получение идентификатора пользователя из cookie или генерация нового, если он отсутствует
-        const userId = req.cookies.userId || generateUniqueUserId();
-    
-        // Чтение файла products.json, чтобы получить текущие данные о товарах
-        fs.readFile('products.json', 'utf-8', (err, data) => {
-            if (err) {
-                console.log(chalk.red("Ошибка чтения данных о продуктах", err)); // Логируем ошибку чтения
-                return res.status(500).send('Ошибка чтения данных о продуктах'); // Ответ клиенту при ошибке
-            }
-    
-            const products = JSON.parse(data); // Преобразование данных из JSON-строки в объект JavaScript
-            const product = products.find(p => p.id === productId); // Поиск товара по идентификатору
-    
-            if (!product) return res.status(404).send('Продукт не найден'); // Если продукт не найден
-    
-            // Проверка, голосовал ли пользователь за этот продукт ранее
-            if (!req.cookies[`rated_${productId}`]) {
-                product.votes++; // Увеличение общего количества голосов
-                // Пересчет рейтинга
-                product.rating = ((product.rating * (product.votes - 1)) + rating) / product.votes;
-    
-                // Запись обновленных данных о товарах обратно в файл
-                fs.writeFile('products.json', JSON.stringify(products, null, 2), (err) => { // Форматирование JSON для удобства
-                    if (err) {
-                        console.log(chalk.red("Ошибка сохранения данных о продукте", err)); // Логируем ошибку сохранения данных
-                        return res.status(500).send('Ошибка сохранения данных о продукте'); // Ответ клиенту при ошибке
-                    }
-    
-                    // Установка cookie, чтобы запомнить, что пользователь уже проголосовал за этот продукт
-                    res.cookie(`rated_${productId}`, true, { maxAge: 86400 * 1000 }); // Действие cookie 1 сутки
-                    res.send(product); // Отправка обновленных данных о продукте клиенту
-                });
-            } else {
-                // Если пользователь уже проголосовал, отправляем статус 403 (доступ запрещен)
-                res.status(403).send('Пользователь уже проголосовал за этот продукт');
-            }
-        });
-    });
 
 // Получаем режим из переменных окружения
 const env = process.env.NODE_ENV || 'development';
