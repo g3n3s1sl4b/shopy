@@ -111,53 +111,53 @@ app.get('/api/products', (req, res) => {
     });
 });
 
-// Обработка POST-запроса для обновления рейтинга продукта
-app.post('/api/rate', (req, res) => {
-    const { productId, rating } = req.body; // Извлечение данных из тела запроса
-
-    // Проверка валидности входных данных
-    if (typeof productId !== 'number' || typeof rating !== 'number') {
-        return res.status(400).send('Некорректные данные рейтинга'); // Проверка данные
-    }
-
-    // Получение идентификатора пользователя из cookie или генерация нового, если он отсутствует
-    const userId = req.cookies.userId || generateUniqueUserId();
-
-    // Чтение файла products.json, чтобы получить текущие данные о товарах
-    fs.readFile('products.json', 'utf-8', (err, data) => {
-        if (err) {
-            console.log(chalk.red("Ошибка чтения данных о продуктах", err)); // Логируем ошибку чтения
-            return res.status(500).send('Ошибка чтения данных о продуктах'); // Ответ клиенту при ошибке
+    // Обработка POST-запроса для обновления рейтинга продукта
+    app.post('/api/rate', (req, res) => {
+        const { productId, rating } = req.body; // Извлечение данных из тела запроса
+    
+        // Проверка валидности входных данных
+        if (typeof productId !== 'number' || typeof rating !== 'number') {
+            return res.status(400).send('Некорректные данные рейтинга'); // Проверка данные
         }
-
-        const products = JSON.parse(data); // Преобразование данных из JSON-строки в объект JavaScript
-        const product = products.find(p => p.id === productId); // Поиск товара по идентификатору
-
-        if (!product) return res.status(404).send('Продукт не найден'); // Если продукт не найден
-
-        // Проверка, голосовал ли пользователь за этот продукт ранее
-        if (!req.cookies[`rated_${productId}`]) {
-            product.votes++; // Увеличение общего количества голосов
-            // Пересчет рейтинга
-            product.rating = ((product.rating * (product.votes - 1)) + rating) / product.votes;
-
-            // Запись обновленных данных о товарах обратно в файл
-            fs.writeFile('products.json', JSON.stringify(products, null, 2), (err) => { // Форматирование JSON для удобства
-                if (err) {
-                    console.log(chalk.red("Ошибка сохранения данных о продукте", err)); // Логируем ошибку сохранения данных
-                    return res.status(500).send('Ошибка сохранения данных о продукте'); // Ответ клиенту при ошибке
-                }
-
-                // Установка cookie, чтобы запомнить, что пользователь уже проголосовал за этот продукт
-                res.cookie(`rated_${productId}`, true, { maxAge: 86400 * 1000 }); // Действие cookie 1 сутки
-                res.send(product); // Отправка обновленных данных о продукте клиенту
-            });
-        } else {
-            // Если пользователь уже проголосовал, отправляем статус 403 (доступ запрещен)
-            res.status(403).send('Пользователь уже проголосовал за этот продукт');
-        }
+    
+        // Получение идентификатора пользователя из cookie или генерация нового, если он отсутствует
+        const userId = req.cookies.userId || generateUniqueUserId();
+    
+        // Чтение файла products.json, чтобы получить текущие данные о товарах
+        fs.readFile('products.json', 'utf-8', (err, data) => {
+            if (err) {
+                console.log(chalk.red("Ошибка чтения данных о продуктах", err)); // Логируем ошибку чтения
+                return res.status(500).send('Ошибка чтения данных о продуктах'); // Ответ клиенту при ошибке
+            }
+    
+            const products = JSON.parse(data); // Преобразование данных из JSON-строки в объект JavaScript
+            const product = products.find(p => p.id === productId); // Поиск товара по идентификатору
+    
+            if (!product) return res.status(404).send('Продукт не найден'); // Если продукт не найден
+    
+            // Проверка, голосовал ли пользователь за этот продукт ранее
+            if (!req.cookies[`rated_${productId}`]) {
+                product.votes++; // Увеличение общего количества голосов
+                // Пересчет рейтинга
+                product.rating = ((product.rating * (product.votes - 1)) + rating) / product.votes;
+    
+                // Запись обновленных данных о товарах обратно в файл
+                fs.writeFile('products.json', JSON.stringify(products, null, 2), (err) => { // Форматирование JSON для удобства
+                    if (err) {
+                        console.log(chalk.red("Ошибка сохранения данных о продукте", err)); // Логируем ошибку сохранения данных
+                        return res.status(500).send('Ошибка сохранения данных о продукте'); // Ответ клиенту при ошибке
+                    }
+    
+                    // Установка cookie, чтобы запомнить, что пользователь уже проголосовал за этот продукт
+                    res.cookie(`rated_${productId}`, true, { maxAge: 86400 * 1000 }); // Действие cookie 1 сутки
+                    res.send(product); // Отправка обновленных данных о продукте клиенту
+                });
+            } else {
+                // Если пользователь уже проголосовал, отправляем статус 403 (доступ запрещен)
+                res.status(403).send('Пользователь уже проголосовал за этот продукт');
+            }
+        });
     });
-});
 
 // Получаем режим из переменных окружения
 const env = process.env.NODE_ENV || 'development';

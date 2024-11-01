@@ -10,7 +10,7 @@
     "onSale": true,
     "image": "catalog/1.png",
     "rating": 4.5,
-    "votes": 120,
+    "votes": 1,
     "attributes": {
         "цвет": "черный",
         "размер экрана": "15.6 дюймов",
@@ -27,8 +27,8 @@
   "discount": 10,
   "onSale": true,
   "image": "catalog/1.png",
-  "rating": 4.5,
-  "votes": 120,
+  "rating": 4,
+  "votes": 2,
   "attributes": {
       "цвет": "черный",
       "размер экрана": "15.6 дюймов",
@@ -45,8 +45,8 @@
   "discount": 10,
   "onSale": true,
   "image": "catalog/1.png",
-  "rating": 4.5,
-  "votes": 120,
+  "rating": 1,
+  "votes": 1,
   "attributes": {
       "цвет": "черный",
       "размер экрана": "15.6 дюймов",

@@ -4,24 +4,18 @@ $(document).ready(function () {
 
     const PRODUCT_URL = "/api/products"; // URL для получения списка продуктов
     const RATE_URL = "/api/rate"; // URL для отправки рейтинга продукта
-    let cart = JSON.parse(localStorage.getItem('cart')) || []; // Загружаем корзину из localStorage или инициализируем пустым массивом
+    let cart = JSON.parse(localStorage.getItem('cart')) || []; 
 
     // Загрузка списка продуктов с сервера с обработкой ошибок
     $.get(PRODUCT_URL)
         .done(function (data) {
-            const products = JSON.parse(data); // Парсим полученные данные из JSON
-            displayProducts(products); // Отображаем продукты на странице
+            const products = JSON.parse(data);
+            displayProducts(products);
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             console.error("Ошибка загрузки продуктов: ", textStatus, errorThrown);
             alert("Не удалось загрузить продукты. Пожалуйста, попробуйте позже.");
         });
-
-    // Обработчик нажатия кнопки "Оформить заказ"
-    $('#place-order').on('click', function (event) {
-        event.preventDefault(); // Предотвращение отправки формы по умолчанию
-        placeOrder();
-    });
 
     // Валидация и отправка заказа
     function placeOrder() {
@@ -29,16 +23,13 @@ $(document).ready(function () {
         const errorMessage = document.getElementById('errorMessage');
         const successMessage = document.getElementById('successMessage');
 
-        // Получаем значения из полей ввода
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const phone = document.getElementById('phone').value;
 
-        // Очищаем сообщение об ошибке
         errorMessage.textContent = '';
         successMessage.textContent = '';
 
-        // Проверяем валидацию
         let valid = true;
 
         if (!validateEmail(email)) {
@@ -51,24 +42,20 @@ $(document).ready(function () {
             valid = false;
         }
 
-        // Если данные валидны, отправляем форму
         if (valid) {
-            // Логика отправки заказа
             const orderData = { items: cart, total: calculateTotal(cart) };
 
-            // Отправляем заказ на сервер
             $.ajax({
                 type: "POST",
-                url: "/api/place-order", // URL вашего сервера для обработки заказа
+                url: "/api/place-order",
                 contentType: "application/json",
                 data: JSON.stringify(orderData),
                 success: function (response) {
-                    console.log(response);
                     $('#successMessage').text(`Заказ ${response.orderId} успешно отправлен!`);
-                    localStorage.removeItem('cart'); // Очищаем корзину 
-                    cart = []; // Обнуляем локальную переменную
-                    updateCartCount(); // Обновляем счетчик до 0
-                    form.reset(); // Очищаем форму
+                    localStorage.removeItem('cart');
+                    cart = [];
+                    updateCartCount();
+                    form.reset();
                 },
                 error: function (jqXHR) {
                     console.error("Ошибка оформления заказа: ", jqXHR);
@@ -78,27 +65,19 @@ $(document).ready(function () {
         }
     }
 
-    // Обработчик нажатия на иконку корзины
-    $('#cart-icon').on('click', function () {
-        displayCart();
-    });
-
-    // Функция для отображения корзины
     function displayCart() {
         const cartItems = $('#cart-items');
         cartItems.empty(); 
         let totalPrice = 0;
 
-        // Проверяем, есть ли товары в корзине
         if (cart.length === 0) {
             $('#cart-items').html(`<li class="list-group-item text-center">Корзина пуста!</li>`);
             $("#place-order").hide();
             $("#orderForm").hide();
             $('#total-price').text('');
         } else {
-            // Отображение элементов корзины
             cart.forEach(item => {
-                totalPrice += item.price * item.quantity; // Учитываем количество при расчете стоимости
+                totalPrice += item.price * item.quantity;
                 cartItems.append(`
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         ${item.name} - ${item.price.toFixed(2)} x ${item.quantity} 
@@ -140,7 +119,7 @@ $(document).ready(function () {
                             <h3 class="card-price">${product.price.toFixed(2)}</h3>
                             <div class="card-text">
                                 ${renderStars(product.rating)}
-                                <span> (${product.votes})</span>
+                                <span class="votes-count">(${product.votes})</span>
                             </div>
                             <button data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" class="btn btn-primary add-to-cart">Buy</button>
                             <button data-id="${product.id}" class="btn btn-secondary show-attributes">Spec</button>
@@ -163,26 +142,25 @@ $(document).ready(function () {
             const productId = $button.data('id');
             const productName = $button.data('name');
             const productPrice = parseFloat($button.data('price'));
-            const quantity = 1; // фиксируем количество на 1, так как это начальная добавка в корзину
+            const quantity = 1;
 
             const product = {
                 id: productId,
                 name: productName,
                 price: productPrice,
-                quantity: quantity // Добавляем количество
+                quantity: quantity
             };
 
-            // Проверяем, есть ли продукт уже в корзине
             const existingProduct = cart.find(item => item.id === productId);
             if (!existingProduct) {
                 cart.push(product);
-                localStorage.setItem('cart', JSON.stringify(cart)); // Сохраняем в localStorage
+                localStorage.setItem('cart', JSON.stringify(cart));
                 console.log('Товар добавлен в корзину!');
                 updateCartCount();
-                $button.text("Товар добавлен").css("background-color", "black").prop("disabled", true); // Меняем текст и цвет кнопки
+                $button.text("Товар добавлен").css("background-color", "black").prop("disabled", true);
             } else {
-                existingProduct.quantity += quantity; // Увеличиваем количество товара в корзине
-                localStorage.setItem('cart', JSON.stringify(cart)); // Обновляем localStorage
+                existingProduct.quantity += quantity;
+                localStorage.setItem('cart', JSON.stringify(cart));
                 console.log('Количество товара обновлено в корзине');
             }
         });
@@ -203,6 +181,15 @@ $(document).ready(function () {
                     console.log('Спасибо за ваш голос!');
                     $star.parent().find('.star').removeClass('checked');
                     $star.prevAll().addBack().addClass('checked');
+
+                    // Обновление количества голосов и рейтинга на клиенте
+                    const newRating = response.newRating; // предполагается, что сервер возвращает обновленный рейтинг
+                    const newVotes = response.newVotes; // предполагается, что сервер возвращает обновленное количество голосов
+
+                    // Обновление UI с новыми данными
+                    const $card = $star.closest('.card-body');
+                    $card.find('.votes-count').text(`(${newVotes})`);
+                    $card.find('.card-text').html(renderStars(newRating) + ` <span class="votes-count">(${newVotes})</span>`);
                 },
                 error: function (err) {
                     console.log('Ошибка при голосовании: ' + err.responseText);
@@ -211,49 +198,35 @@ $(document).ready(function () {
         });
     }
 
-// Обработчик событий для клика по изображению продукта
-$('#product-list').on('click', '.card-img-top', function () {
-    // Получаем URL изображения из атрибута `src`
-    const imgSrc = $(this).attr('src');
-
-    // Устанавливаем URL в источник изображения внутри модального окна
-    $('#modal-image').attr('src', imgSrc);
-
-    // Создаем и открываем модальное окно с использованием Bootstrap
-    const imageModal = new bootstrap.Modal(document.getElementById('image-modal'));
-    imageModal.show();
-});
-
-
-// Функция для отображения характеристик товара
-function showProductAttributes(productId) {
-    $.get(`${PRODUCT_URL}/${productId}`)
-        .done(function (data) {
-            const product = data;
-            let attributesHtml = '<table class="table table-striped">';
-            attributesHtml += `<thead>
-                                 <tr>
-                                    <th>Характеристика</th>
-                                    <th>Значение</th>
-                                 </tr>
-                               </thead><tbody>`;
-            for (const [key, value] of Object.entries(product.attributes)) {
-                attributesHtml += `<tr>
-                                     <td>${key}</td>
-                                     <td>${value}</td>
-                                   </tr>`;
-            } 
-            attributesHtml += '</tbody></table>';
-           
-            const attributesModal = new bootstrap.Modal($('#attributes-modal'));
-            $('#attributes-modal .modal-body').html(attributesHtml);
-            attributesModal.show();
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            console.error("Ошибка загрузки характеристик продукта: ", textStatus, errorThrown);
-            alert("Не удалось загрузить характеристики. Пожалуйста, попробуйте позже.");
-        });
-}
+    // Функция для отображения характеристик товара
+    function showProductAttributes(productId) {
+        $.get(`${PRODUCT_URL}/${productId}`)
+            .done(function (data) {
+                const product = data;
+                let attributesHtml = '<table class="table table-striped">';
+                attributesHtml += `<thead>
+                                     <tr>
+                                        <th>Характеристика</th>
+                                        <th>Значение</th>
+                                     </tr>
+                                   </thead><tbody>`;
+                for (const [key, value] of Object.entries(product.attributes)) {
+                    attributesHtml += `<tr>
+                                         <td>${key}</td>
+                                         <td>${value}</td>
+                                       </tr>`;
+                }
+                attributesHtml += '</tbody></table>';
+               
+                const attributesModal = new bootstrap.Modal($('#attributes-modal'));
+                $('#attributes-modal .modal-body').html(attributesHtml);
+                attributesModal.show();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error("Ошибка загрузки характеристик продукта: ", textStatus, errorThrown);
+                alert("Не удалось загрузить характеристики. Пожалуйста, попробуйте позже.");
+            });
+    }
 
     // Функция для отрисовки звездочек на основе рейтинга
     function renderStars(rating) {
@@ -264,7 +237,43 @@ function showProductAttributes(productId) {
         return starsHtml;
     }
 
-    // Функция для изменения количества товаров в корзине
+    function calculateTotal(cart) {
+        return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    }
+
+    function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        $('#cart-count').text(cart.length);
+    }
+
+    function validatePhone(phone) {
+        const phonePattern = /^\+?[0-9]{7,15}$/; 
+        return phonePattern.test(phone);
+    }
+
+    function validateEmail(email) {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+        return emailPattern.test(email);
+    }
+
+    // Обработчик нажатия кнопки "Оформить заказ"
+    $('#place-order').on('click', function (event) {
+        event.preventDefault();
+        placeOrder();
+    });
+
+    $('#cart-icon').on('click', function () {
+        displayCart();
+    });
+
+    // Обработчик событий для клика по изображению продукта
+    $('#product-list').on('click', '.card-img-top', function () {
+            const imgSrc = $(this).attr('src');
+            $('#modal-image').attr('src', imgSrc);
+            const imageModal = new bootstrap.Modal(document.getElementById('image-modal'));
+            imageModal.show();
+    });
+
     $('#cart').on('click', '.change-quantity', function () {
         const id = $(this).data('id');
         const item = cart.find(item => item.id === id);
@@ -274,38 +283,17 @@ function showProductAttributes(productId) {
             item.quantity--;
         }
         localStorage.setItem('cart', JSON.stringify(cart));
-        displayCart(); // Обновляем отображение корзины
+        displayCart();
     });
 
-    // Удаление товара из корзины
     $('#cart').on('click', '.remove-item', function () {
         const id = $(this).data('id');
         cart = cart.filter(item => item.id !== id);
         localStorage.setItem('cart', JSON.stringify(cart));
-        displayCart(); // Обновляем отображение корзины
+        displayCart();
     });
 
-    // Функция для расчета общей стоимости
-    function calculateTotal(cart) {
-        return cart.reduce((total, item) => total + item.price * item.quantity, 0);
-    }
 
-    // Функция для обновления количества товаров в корзине
-    function updateCartCount() {
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        $('#cart-count').text(cart.length);
-    }
 
-    // Функция для проверки телефонного номера
-    function validatePhone(phone) {
-        // Регулярное выражение для проверки формата телефона
-        const phonePattern = /^\+?[0-9]{7,15}$/; 
-        return phonePattern.test(phone);
-    }
 
-    // Функция для проверки адреса электронной почты
-    function validateEmail(email) {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
-        return emailPattern.test(email);
-    }
 });
