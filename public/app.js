@@ -22,8 +22,6 @@ $(document).ready(function () {
     const form = document.getElementById("orderForm");
     const errorMessage = document.getElementById("errorMessage");
     const successMessage = document.getElementById("successMessage");
-
-    const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
     const phone = document.getElementById("phone").value;
 
@@ -203,43 +201,45 @@ $(document).ready(function () {
       }
     });
 
-    // Обработчик событий для звездочного рейтинга
-    $(".star").on("click", function (e) {
-      const $star = $(e.target);
-      const productId = $star.closest(".card").find(".add-to-cart").data("id");
-      const rating = $star.data("value");
 
-      // Отправка рейтинга на сервер
-      $.ajax({
-        url: RATE_URL,
-        method: "POST",
-        contentType: "application/json",
-        data: JSON.stringify({ productId, rating }),
-        success: function (response) {
-          console.log("Спасибо за ваш голос!");
-          $star.parent().find(".star").removeClass("checked");
-          $star.prevAll().addBack().addClass("checked");
 
-          // Обновление количества голосов и рейтинга на клиенте
-          const newRating = response.newRating; // предполагается, что сервер возвращает обновленный рейтинг
-          const newVotes = response.newVotes; // предполагается, что сервер возвращает обновленное количество голосов
 
-          // Обновление UI с новыми данными
-          const $card = $star.closest(".card-body");
-          $card.find(".votes-count").text(`(${newVotes})`);
-          $card
-            .find(".card-text")
-            .html(
-              renderStars(newRating) +
-                ` <span class="votes-count">(${newVotes})</span>`
-            );
-        },
-        error: function (err) {
-          console.log("Ошибка при голосовании: " + err.responseText);
-        },
-      });
-    });
+ // Обработчик событий для звездочного рейтинга
+ $('.star').on('click', function (e) {
+
+  const $star = $(e.target);
+  const productId = $star.closest('.card').find('.add-to-cart').data('id');
+  const rating = $star.data('value');
+  console.log(productId,rating);
+  // Отправка рейтинга на сервер
+  $.ajax({
+      url: RATE_URL,
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({ productId, rating }),
+      success: function (response) {
+          console.log('Спасибо за ваш голос!');
+          $star.parent().find('.star').removeClass('checked');
+          $star.prevAll().addBack().addClass('checked');
+      },
+      error: function (err) {
+          console.log('Ошибка при голосовании: ' + err.responseText);
+      }
+  });
+});
+
   }
+
+
+  // Функция для отрисовки звездочек на основе рейтинга
+  function renderStars(rating) {
+    let starsHtml = ''; // Инициализация строки для звезд
+    for (let i = 1; i <= 5; i++) { // Перебор от 1 до 5 (количество звезд)
+        starsHtml += `<span class="star ${i <= rating ? 'checked' : ''}" data-value="${i}">&#9733;</span>`; // Добавляем звездочку с классом 'checked' для уже оцененных
+    }
+    return starsHtml; // Возвращаем строку с HTML-кодом звезд
+}
+
 
   // Функция для отображения характеристик товара
   function showProductAttributes(productId) {
@@ -275,17 +275,6 @@ $(document).ready(function () {
           "Не удалось загрузить характеристики. Пожалуйста, попробуйте позже."
         );
       });
-  }
-
-  // Функция для отрисовки звездочек на основе рейтинга
-  function renderStars(rating) {
-    let starsHtml = "";
-    for (let i = 1; i <= 5; i++) {
-      starsHtml += `<span class="star ${
-        i <= rating ? "checked" : ""
-      }" data-value="${i}" style="font-size: 36px; color: gold;">&#9733;</span>`;
-    }
-    return starsHtml;
   }
 
   function calculateTotal(cart) {

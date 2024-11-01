@@ -18,6 +18,7 @@ dotenv.config();
 // Настройка логирования с использованием morgan
 morgan.token('method', (req) => chalk.blue(req.method)); // Цвет метода запроса
 morgan.token('url', (req) => chalk.green(req.url)); // Цвет URL запроса
+morgan.token('body', (req) => chalk.black(JSON.stringify(req.body))); // Цвет Headers запроса
 morgan.token('status', (req, res) => chalk.yellow(res.statusCode)); // Цвет статуса ответа
 morgan.token('response-time', (req, res) => chalk.magenta(`${res.get('response-time')} ms`)); // Цвет времени ответа
 morgan.token('remote-addr', (req) => chalk.cyan(req.ip)); // Цвет для IP-адреса клиента
@@ -30,7 +31,7 @@ morgan.token('referer', (req) => chalk.cyan(req.get('Referer') || 'no referer'))
 const app = express();
 
 // Создаем формат логирования
-const loggerFormat = ':date | :remote-addr | :cookies | session ID: :session-id | referer: :referer | :method :url :status';
+const loggerFormat = ':date | :remote-addr | :cookies | session ID: :session-id | referer: :referer | :method :url :body :status';
 
 // Настройка сессий с улучшением безопасности
 app.use(session({
@@ -130,6 +131,7 @@ app.post('/api/rate', (req, res) => {
         }
 
         const products = JSON.parse(data); // Преобразование данных из JSON-строки в объект JavaScript
+        console.log(products);
         const product = products.find(p => p.id === productId); // Поиск товара по идентификатору
 
         if (!product) return res.status(404).send('Продукт не найден'); // Если продукт не найден
