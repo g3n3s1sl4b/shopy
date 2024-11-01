@@ -219,11 +219,14 @@ $(document).ready(function () {
       data: JSON.stringify({ productId, rating }),
       success: function (response) {
           console.log('Спасибо за ваш голос!');
+          alert('Спасибо за ваш голос!');
+          err.responseText
           $star.parent().find('.star').removeClass('checked');
           $star.prevAll().addBack().addClass('checked');
       },
       error: function (err) {
           console.log('Ошибка при голосовании: ' + err.responseText);
+          alert(err.responseText);
       }
   });
 });

@@ -129,11 +129,8 @@ app.post('/api/rate', (req, res) => {
             console.log(chalk.red("Ошибка чтения данных о продуктах", err)); // Логируем ошибку чтения
             return res.status(500).send('Ошибка чтения данных о продуктах'); // Ответ клиенту при ошибке
         }
-
         const products = JSON.parse(data); // Преобразование данных из JSON-строки в объект JavaScript
-        console.log(products);
         const product = products.find(p => p.id === productId); // Поиск товара по идентификатору
-
         if (!product) return res.status(404).send('Продукт не найден'); // Если продукт не найден
 
         // Проверка, голосовал ли пользователь за этот продукт ранее
