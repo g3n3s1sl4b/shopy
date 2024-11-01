@@ -43,8 +43,8 @@
     "discount": 10,
     "onSale": true,
     "image": "catalog/item.png",
-    "rating": 2.5,
-    "votes": 4,
+    "rating": 2.8,
+    "votes": 5,
     "attributes": {
       "Size": "Long",
       "Dim": 200

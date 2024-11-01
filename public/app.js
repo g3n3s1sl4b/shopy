@@ -122,31 +122,25 @@ $(document).ready(function () {
 
       const productHtml = `
                 <div class="col-12 col-md-6 col-lg-4 position-relative">
-                    <div class="card mb-4 shadow-sm text-center" style="border-radius: 15px;">
+                
+                    <div class="card mb-4 shadow-sm text-center" style="border-radius: 5px;">
                          <img src="${
                            product.image
                          }" class="card-img-top product-image" alt="${
         product.name
-      }" style="object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px;" data-id="${
+      }" style="object-fit: cover; border-top-left-radius: 5px; border-top-right-radius: 5px;" data-id="${
         product.id
       }">
                         ${discountBadge} ${saleBadge}
+
+
                         <div class="card-body">
-                            <h5 class="card-title">${product.name}</h5>
-                            <h6 class="brand-name">Бренд: ${product.brand}</h6>
-                            <p style="display: flex; justify-content: space-between;">
-                                <span>Артикул: ${product.sku}</span>
-                                <span>Серийный номер: ${product.serial}</span>
-                            </p>
+                            <h5 class="card-title">${product.brand} : ${product.name}</h5>
+                            
                             <h3 class="card-price">${product.price.toFixed(
                               2
-                            )}</h3>
-                            <div class="card-text">
-                                ${renderStars(product.rating)}
-                                <span class="votes-count">(${
-                                  product.votes
-                                })</span>
-                            </div>
+                            )} $</h3>
+                            
                             <button data-id="${product.id}" data-name="${
         product.name
       }" data-price="${
@@ -156,7 +150,24 @@ $(document).ready(function () {
                               product.id
                             }" class="btn btn-secondary show-attributes">Spec</button>
                         </div>
+ <div class="card-footer text-body-secondary">
+                                <div class="card-text">
+                                ${renderStars(product.rating)}
+                                <span class="votes-count">(${
+                                  product.votes
+                                })</span>
+                            </div>
+                      
+  </div>
+
+
                     </div>
+
+
+
+
+
+
                 </div>
             `;
       $("#product-list").append(productHtml);
