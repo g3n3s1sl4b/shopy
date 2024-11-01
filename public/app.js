@@ -1,4 +1,8 @@
 $(document).ready(function () {
+
+   // Показываем спиннер при загрузке
+   $("#spinner").show();
+
   // Обновляем количество товаров в корзине при загрузке страницы
   updateCartCount();
 
@@ -15,6 +19,10 @@ $(document).ready(function () {
     .fail(function (jqXHR, textStatus, errorThrown) {
       console.error("Ошибка загрузки продуктов: ", textStatus, errorThrown);
       alert("Не удалось загрузить продукты. Пожалуйста, попробуйте позже.");
+    })
+    .always(function () {
+      // Скрываем спиннер после завершения загрузки
+      $("#spinner").hide();
     });
 
   function placeOrder() {
