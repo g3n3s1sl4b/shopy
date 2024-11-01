@@ -17,7 +17,6 @@ $(document).ready(function () {
       alert("Не удалось загрузить продукты. Пожалуйста, попробуйте позже.");
     });
 
-  // Валидация и отправка заказа
   function placeOrder() {
     const form = document.getElementById("orderForm");
     const errorMessage = document.getElementById("errorMessage");
@@ -201,47 +200,43 @@ $(document).ready(function () {
       }
     });
 
-
-
-
- // Обработчик событий для звездочного рейтинга
- $('.star').on('click', function (e) {
-
-  const $star = $(e.target);
-  const productId = $star.closest('.card').find('.add-to-cart').data('id');
-  const rating = $star.data('value');
-  console.log(productId,rating);
-  // Отправка рейтинга на сервер
-  $.ajax({
-      url: RATE_URL,
-      method: "POST",
-      contentType: "application/json",
-      data: JSON.stringify({ productId, rating }),
-      success: function (response) {
-          console.log('Спасибо за ваш голос!');
-          alert('Спасибо за ваш голос!');
-          $star.parent().find('.star').removeClass('checked');
-          $star.prevAll().addBack().addClass('checked');
-      },
-      error: function (err) {
-          console.log('Ошибка при голосовании: ' + err.responseText);
+    // Обработчик событий для звездочного рейтинга
+    $(".star").on("click", function (e) {
+      const $star = $(e.target);
+      const productId = $star.closest(".card").find(".add-to-cart").data("id");
+      const rating = $star.data("value");
+      console.log(productId, rating);
+      // Отправка рейтинга на сервер
+      $.ajax({
+        url: RATE_URL,
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ productId, rating }),
+        success: function (response) {
+          console.log("Спасибо за ваш голос!");
+          alert("Спасибо за ваш голос!");
+          $star.parent().find(".star").removeClass("checked");
+          $star.prevAll().addBack().addClass("checked");
+        },
+        error: function (err) {
+          console.log("Ошибка при голосовании: " + err.responseText);
           alert(err.responseText);
-      }
-  });
-});
-
+        },
+      });
+    });
   }
 
-  // Функция для отрисовки звездочек на основе рейтинга
   function renderStars(rating) {
-    let starsHtml = ''; // Инициализация строки для звезд
-    for (let i = 1; i <= 5; i++) { // Перебор от 1 до 5 (количество звезд)
-        starsHtml += `<span class="star ${i <= rating ? 'checked' : ''}" data-value="${i}">&#9733;</span>`; // Добавляем звездочку с классом 'checked' для уже оцененных
+    let starsHtml = ""; // Инициализация строки для звезд
+    for (let i = 1; i <= 5; i++) {
+      // Перебор от 1 до 5 (количество звезд)
+      starsHtml += `<span class="star ${
+        i <= rating ? "checked" : ""
+      }" data-value="${i}">&#9733;</span>`; // Добавляем звездочку с классом 'checked' для уже оцененных
     }
     return starsHtml; // Возвращаем строку с HTML-кодом звезд
-}
+  }
 
-  // Функция для отображения характеристик товара
   function showProductAttributes(productId) {
     $.get(`${PRODUCT_URL}/${productId}`)
       .done(function (data) {
@@ -296,7 +291,6 @@ $(document).ready(function () {
     return emailPattern.test(email);
   }
 
-  // Обработчик нажатия кнопки "Оформить заказ"
   $("#place-order").on("click", function (event) {
     event.preventDefault();
     placeOrder();
@@ -306,7 +300,6 @@ $(document).ready(function () {
     displayCart();
   });
 
-  // Обработчик событий для клика по изображению продукта
   $("#product-list").on("click", ".card-img-top", function () {
     const imgSrc = $(this).attr("src");
     $("#modal-image").attr("src", imgSrc);
@@ -334,5 +327,4 @@ $(document).ready(function () {
     localStorage.setItem("cart", JSON.stringify(cart));
     displayCart();
   });
-
 });
