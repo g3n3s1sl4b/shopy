@@ -128,7 +128,7 @@ $(document).ready(function () {
             const productHtml = `
                 <div class="col-12 col-md-6 col-lg-4 position-relative">
                     <div class="card mb-4 shadow-sm text-center" style="border-radius: 15px;">
-                        <img src="${product.image}" class="card-img-top" alt="${product.name}" style="object-fit: cover; height: 200px; border-top-left-radius: 15px; border-top-right-radius: 15px;" data-id="${product.id}" class="product-image">
+                         <img src="${product.image}" class="card-img-top product-image" alt="${product.name}" style="object-fit: cover; height: 200px; border-top-left-radius: 15px; border-top-right-radius: 15px;" data-id="${product.id}">
                         ${discountBadge} ${saleBadge}
                         <div class="card-body">
                             <h5 class="card-title">${product.name}</h5>
@@ -149,15 +149,6 @@ $(document).ready(function () {
                 </div>
             `;
             $('#product-list').append(productHtml);
-        });
-
-        // Обработчик событий для увеличения изображения товара
-        $('.product-image').on('click', function () {
-            console.log("SHOW FOTO");
-            const imgSrc = $(this).attr('src');
-            $('#image-modal .modal-body img').attr('src', imgSrc);
-            const imageModal = new bootstrap.Modal($('#image-modal'));
-            imageModal.show();
         });
 
         // Обработчик событий для кнопки "Характеристики"
@@ -220,36 +211,49 @@ $(document).ready(function () {
         });
     }
 
-    // Функция для отображения характеристик товара
-    function showProductAttributes(productId) {
-        $.get(`${PRODUCT_URL}/${productId}`)
-            .done(function (data) {
-                console.log("TEST");
-                const product = JSON.parse(data);
-                let attributesHtml = '<table class="table table-striped">';
-                attributesHtml += `<thead>
-                                     <tr>
-                                        <th>Характеристика</th>
-                                        <th>Значение</th>
-                                     </tr>
-                                   </thead><tbody>`;
-                for (const [key, value] of Object.entries(product.attributes)) {
-                    attributesHtml += `<tr>
-                                         <td>${key}</td>
-                                         <td>${value}</td>
-                                       </tr>`;
-                }
-                attributesHtml += '</tbody></table>';
+// Обработчик событий для клика по изображению продукта
+$('#product-list').on('click', '.card-img-top', function () {
+    // Получаем URL изображения из атрибута `src`
+    const imgSrc = $(this).attr('src');
 
-                $('#attributes-modal .modal-body').html(attributesHtml);
-                const attributesModal = new bootstrap.Modal($('#attributes-modal'));
-                attributesModal.show();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.error("Ошибка загрузки характеристик продукта: ", textStatus, errorThrown);
-                alert("Не удалось загрузить характеристики. Пожалуйста, попробуйте позже.");
-            });
-    }
+    // Устанавливаем URL в источник изображения внутри модального окна
+    $('#modal-image').attr('src', imgSrc);
+
+    // Создаем и открываем модальное окно с использованием Bootstrap
+    const imageModal = new bootstrap.Modal(document.getElementById('image-modal'));
+    imageModal.show();
+});
+
+
+// Функция для отображения характеристик товара
+function showProductAttributes(productId) {
+    $.get(`${PRODUCT_URL}/${productId}`)
+        .done(function (data) {
+            const product = data;
+            let attributesHtml = '<table class="table table-striped">';
+            attributesHtml += `<thead>
+                                 <tr>
+                                    <th>Характеристика</th>
+                                    <th>Значение</th>
+                                 </tr>
+                               </thead><tbody>`;
+            for (const [key, value] of Object.entries(product.attributes)) {
+                attributesHtml += `<tr>
+                                     <td>${key}</td>
+                                     <td>${value}</td>
+                                   </tr>`;
+            } 
+            attributesHtml += '</tbody></table>';
+           
+            const attributesModal = new bootstrap.Modal($('#attributes-modal'));
+            $('#attributes-modal .modal-body').html(attributesHtml);
+            attributesModal.show();
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.error("Ошибка загрузки характеристик продукта: ", textStatus, errorThrown);
+            alert("Не удалось загрузить характеристики. Пожалуйста, попробуйте позже.");
+        });
+}
 
     // Функция для отрисовки звездочек на основе рейтинга
     function renderStars(rating) {
