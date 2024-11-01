@@ -10,16 +10,38 @@
 </head>
 <body>
   <div class="container mt-5">
+    <!-- Верхняя панель: Выбор языка и валюты -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1>Магазин товаров</h1>
-      <!-- Добавляем кнопку входа -->
-      <button class="btn btn-outline-primary" id="login-button">Вход в личный кабинет</button>
+      <div class="d-flex align-items-center">
+        <select class="form-select me-2" style="width: auto;" id="language-select">
+          <option value="ru">Русский</option>
+          <option value="en">Английский</option>
+          <!-- Добавьте другие языки -->
+        </select>
+
+        <select class="form-select me-2" style="width: auto;" id="currency-select">
+          <option value="RUB">RUB</option>
+          <option value="USD">USD</option>
+          <!-- Добавьте другие валюты -->
+        </select>
+
+        <div class="input-group flex-nowrap">
+          <input type="text" class="form-control" placeholder="Поиск товаров..." aria-label="Поиск товаров">
+          <button class="btn btn-outline-secondary" type="button" id="search-button">Искать</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Поисковая строка -->
-    <div class="input-group mb-4">
-      <input type="text" class="form-control" placeholder="Поиск товаров..." aria-label="Поиск товаров">
-      <button class="btn btn-outline-secondary" type="button" id="search-button">Искать</button>
+    <!-- Панель управления: Название, Вход и Корзина -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="me-auto">Магазин товаров</h1>
+      <div class="d-flex align-items-center">
+        <button class="btn btn-outline-primary me-2" id="login-button">Вход в личный кабинет</button>
+        <button id="cart-icon" class="btn btn-primary position-relative">
+          Корзина
+          <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+        </button>
+      </div>
     </div>
 
     <!-- Фильтр категорий -->
@@ -32,18 +54,8 @@
       </div>
     </div>
 
-    <!-- Корзина размещена справа -->
-    <div class="position-relative d-flex justify-content-end mb-4">
-      <button id="cart-icon" class="btn btn-primary position-relative">
-        Корзина
-        <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
-      </button>
-    </div>
-
     <div id="product-list" class="row"></div>
       <!-- Элемент для отображения списка продуктов, будет заполнен динамически -->
-
-
 
       <!-- Модальное окно для корзины -->
       <div
