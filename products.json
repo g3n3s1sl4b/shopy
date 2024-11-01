@@ -7,6 +7,7 @@
     "serial": "A1234567890",
     "price": 3.99,
     "discount": 10,
+    "category": "bit",
     "onSale": true,
     "image": "https://gtm-bits.eu/media/image/product/4517/lg/kmiz_hartmetallfraeser_ellipse_normal_500_104_277_176_014.webp",
     "rating": 3,
@@ -24,6 +25,7 @@
     "serial": "A1234567890",
     "price": 3.99,
     "discount": 10,
+    "category": "lak",
     "onSale": true,
     "image": "https://gtm-bits.eu/media/image/product/4517/lg/kmiz_hartmetallfraeser_ellipse_normal_500_104_277_176_014.webp",
     "rating": 2.5,
@@ -42,165 +44,13 @@
     "price": 3.99,
     "discount": 10,
     "onSale": true,
+    "category": "bit",
     "image": "https://gtm-bits.eu/media/image/product/4517/lg/kmiz_hartmetallfraeser_ellipse_normal_500_104_277_176_014.webp",
     "rating": 2.8,
     "votes": 5,
     "attributes": {
       "Size": "Long",
       "Dim": 300
-    }
-  },
-  {
-    "id": 4,
-    "name": "Item 4",
-    "brand": "KMIZ",
-    "sku": "123456",
-    "serial": "A1234567890",
-    "price": 3.99,
-    "discount": 10,
-    "onSale": true,
-    "image": "https://gtm-bits.eu/media/image/product/4517/lg/kmiz_hartmetallfraeser_ellipse_normal_500_104_277_176_014.webp",
-    "rating": 3.2,
-    "votes": 6,
-    "attributes": {
-      "Size": "Long",
-      "Dim": 400
-    }
-  },
-  {
-    "id": 5,
-    "name": "Item 5",
-    "brand": "KMIZ",
-    "sku": "123456",
-    "serial": "A1234567890",
-    "price": 3.99,
-    "discount": 10,
-    "onSale": true,
-    "image": "https://gtm-bits.eu/media/image/product/4517/lg/kmiz_hartmetallfraeser_ellipse_normal_500_104_277_176_014.webp",
-    "rating": 3.5,
-    "votes": 5,
-    "attributes": {
-      "Size": "Long",
-      "Dim": 500
-    }
-  },
-  {
-    "id": 6,
-    "name": "Item 6",
-    "brand": "KMIZ",
-    "sku": "123456",
-    "serial": "A1234567890",
-    "price": 3.99,
-    "discount": 10,
-    "onSale": true,
-    "image": "https://gtm-bits.eu/media/image/product/4517/lg/kmiz_hartmetallfraeser_ellipse_normal_500_104_277_176_014.webp",
-    "rating": 3.7,
-    "votes": 7,
-    "attributes": {
-      "Size": "Long",
-      "Dim": 600
-    }
-  },
-  {
-    "id": 7,
-    "name": "Item 7",
-    "brand": "KMIZ",
-    "sku": "123456",
-    "serial": "A1234567890",
-    "price": 3.99,
-    "discount": 10,
-    "onSale": true,
-    "image": "https://gtm-bits.eu/media/image/product/4517/lg/kmiz_hartmetallfraeser_ellipse_normal_500_104_277_176_014.webp",
-    "rating": 4.0,
-    "votes": 8,
-    "attributes": {
-      "Size": "Long",
-      "Dim": 700
-    }
-  },
-  {
-    "id": 8,
-    "name": "Item 8",
-    "brand": "KMIZ",
-    "sku": "123456",
-    "serial": "A1234567890",
-    "price": 3.99,
-    "discount": 10,
-    "onSale": true,
-    "image": "https://gtm-bits.eu/media/image/product/4517/lg/kmiz_hartmetallfraeser_ellipse_normal_500_104_277_176_014.webp",
-    "rating": 4.3,
-    "votes": 9,
-    "attributes": {
-      "Size": "Long",
-      "Dim": 800
-    }
-  },
-  {
-    "id": 9,
-    "name": "Item 9",
-    "brand": "KMIZ",
-    "sku": "123456",
-    "serial": "A1234567890",
-    "price": 3.99,
-    "discount": 10,
-    "onSale": true,
-    "image": "https://gtm-bits.eu/media/image/product/4517/lg/kmiz_hartmetallfraeser_ellipse_normal_500_104_277_176_014.webp",
-    "rating": 4.5,
-    "votes": 10,
-    "attributes": {
-      "Size": "Long",
-      "Dim": 900
-    }
-  },
-  {
-    "id": 10,
-    "name": "Item 10",
-    "brand": "KMIZ",
-    "sku": "123456",
-    "serial": "A1234567890",
-    "price": 3.99,
-    "discount": 10,
-    "onSale": false,
-    "image": "https://gtm-bits.eu/media/image/product/4517/lg/kmiz_hartmetallfraeser_ellipse_normal_500_104_277_176_014.webp",
-    "rating": 4.7,
-    "votes": 11,
-    "attributes": {
-      "Size": "Long",
-      "Dim": 1000
-    }
-  },
-  {
-    "id": 11,
-    "name": "Item 11",
-    "brand": "KMIZ",
-    "sku": "123457",
-    "serial": "B1234567890",
-    "price": 4.99,
-    "discount": 15,
-    "onSale": true,
-    "image": "https://gtm-bits.eu/media/image/product/4517/lg/kmiz_hartmetallfraeser_ellipse_normal_500_104_277_176_014.webp",
-    "rating": 3.9,
-    "votes": 8,
-    "attributes": {
-      "Size": "Short",
-      "Dim": 150
-    }
-  },
-  {
-    "id": 12,
-    "name": "Item 12",
-    "brand": "KMIZ",
-    "sku": "123457",
-    "serial": "B1234567890",
-    "price": 4.99,
-    "discount": 15,
-    "onSale": false,
-    "image": "https://gtm-bits.eu/media/image/product/4517/lg/kmiz_hartmetallfraeser_ellipse_normal_500_104_277_176_014.webp",
-    "rating": 2.0,
-    "votes": 6,
-    "attributes": {
-      "Size": "Short",
-      "Dim": 250
     }
   }
 ]

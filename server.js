@@ -89,7 +89,23 @@ app.get('/api/products', (req, res) => {
             console.log(chalk.red("Ошибка чтения данных о продуктах", err)); // Логируем ошибку чтения
             return res.status(500).send('Ошибка чтения данных о продуктах'); // Ответ клиенту при ошибке
         }
-        res.send(data); // Отправляем данные о товарах клиенту
+
+        try {
+            const products = JSON.parse(data); // Парсим JSON-данные из файла
+            const category = req.query.category;
+
+            if (category) {
+                const filteredProducts = products.filter(product => product.category === category);
+                console.log("FILTER", filteredProducts);
+                res.json(filteredProducts);
+            } else {
+                console.log("ALL", products);
+                res.json(data);
+            }
+        } catch (parseError) {
+            console.log(chalk.red("Ошибка парсинга данных о продуктах", parseError));
+            res.status(500).send('Ошибка обработки данных о продуктах');
+        }
     });
 });
 

@@ -10,6 +10,34 @@ $(document).ready(function () {
   const RATE_URL = "/api/rate"; // URL для отправки рейтинга продукта
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
+
+// Показывать и филтровать продукты по категории
+$(".btn-filter").click(function () {
+  // Получаем категорию из кнопки
+  const category = $(this).data("category");
+  // Обновляем URL для фильтрации
+  const url = category ? `${PRODUCT_URL}?category=${category}` : PRODUCT_URL;
+  // Показываем спиннер
+  $("#spinner").show();
+  // Загружаем отфильтрованные продукты
+  $.get(url)
+    .done(function (data) {
+      console.log("GOT" , data);
+      displayProducts(data);
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+      console.error("Ошибка загрузки продуктов: ", textStatus, errorThrown);
+      alert("Не удалось загрузить продукты. Пожалуйста, попробуйте позже.");
+    })
+    .always(function () {
+      // Скрываем спиннер
+      $("#spinner").hide();
+    });
+});
+
+
+
+
   // Загрузка списка продуктов с сервера с обработкой ошибок
   $.get(PRODUCT_URL)
     .done(function (data) {
