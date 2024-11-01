@@ -22,7 +22,11 @@ $(document).ready(function () {
     // Обработчик нажатия кнопки "Оформить заказ"
     $('#place-order').on('click', function (event) {
         event.preventDefault(); // Предотвращение отправки формы по умолчанию
+        placeOrder();
+    });
 
+    // Валидация и отправка заказа
+    function placeOrder() {
         const form = document.getElementById('orderForm');
         const errorMessage = document.getElementById('errorMessage');
         const successMessage = document.getElementById('successMessage');
@@ -74,33 +78,36 @@ $(document).ready(function () {
                 }
             });
         }
-    });
+    }
 
     // Обработчик нажатия на иконку корзины
     $('#cart-icon').on('click', function () {
         displayCart();
     });
 
-    // Функция для отображения корзины
-    function displayCart() {
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const cartItems = $('#cart-items');
-        cartItems.empty(); // Очистка списка перед заполнением
+   // Функция для отображения корзины
+   function displayCart() {
+    const cartItems = $('#cart-items');
+    cartItems.empty(); 
+    let totalPrice = 0;
 
-        let totalPrice = 0;
+    // Отображение элементов корзины
+    cart.forEach(item => {
+        totalPrice += item.price * item.quantity; // Учитываем количество при расчете стоимости
+        cartItems.append(`
+            <li class="list-group-item">
+                ${item.name} - ${item.price.toFixed(2)} x ${item.quantity} 
+                <button data-id="${item.id}" class="btn btn-outline-secondary change-quantity increment">+</button>
+                <button data-id="${item.id}" class="btn btn-outline-secondary change-quantity decrement">-</button>
+                <button data-id="${item.id}" class="btn btn-danger remove-item">Удалить</button>
+            </li>
+        `);
+    });
 
-        // Отображение элементов корзины
-        cart.forEach(item => {
-            cartItems.append(`<li class="list-group-item">${item.name} - ${item.price.toFixed(2)}</li>`);
-            totalPrice += item.price;
-        });
-
-        $('#total-price').text(`Всего: ${totalPrice.toFixed(2)}`);
-
-        // Показываем модальное окно
-        const cartModal = new bootstrap.Modal(document.getElementById('cart'), { keyboard: false });
-        cartModal.show();
-    }
+    $('#total-price').text(`Всего: ${totalPrice.toFixed(2)}`);
+    const cartModal = new bootstrap.Modal(document.getElementById('cart'), { keyboard: false });
+    cartModal.show();
+}
 
     function displayProducts(products) {
         $('#product-list').empty(); 
@@ -187,16 +194,37 @@ $(document).ready(function () {
 
     // Функция для отрисовки звездочек на основе рейтинга
     function renderStars(rating) {
-        let starsHtml = ''; // Инициализация строки для звезд
-        for (let i = 1; i <= 5; i++) { // Перебор от 1 до 5 (количество звезд)
-            starsHtml += `<span class="star ${i <= rating ? 'checked' : ''}" data-value="${i}">&#9733;</span>`; // Добавляем звездочку с классом 'checked' для уже оцененных
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+            starsHtml += `<span class="star ${i <= rating ? 'checked' : ''}" data-value="${i}" style="font-size: 24px; color: gold;">&#9733;</span>`;
         }
-        return starsHtml; // Возвращаем строку с HTML-кодом звезд
+        return starsHtml;
     }
 
-    // Функция для подсчета общей стоимости
+    // Функция для изменения количества товаров в корзине
+    $('#cart').on('click', '.change-quantity', function () {
+        const id = $(this).data('id');
+        const item = cart.find(item => item.id === id);
+        if ($(this).hasClass('increment')) {
+            item.quantity++;
+        } else if ($(this).hasClass('decrement') && item.quantity > 1) {
+            item.quantity--;
+        }
+        localStorage.setItem('cart', JSON.stringify(cart));
+        displayCart(); // Обновляем отображение корзины
+    });
+
+    // Удаление товара из корзины
+    $('#cart').on('click', '.remove-item', function () {
+        const id = $(this).data('id');
+        cart = cart.filter(item => item.id !== id);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        displayCart(); // Обновляем отображение корзины
+    });
+
+    // Функция для расчета общей стоимости
     function calculateTotal(cart) {
-        return cart.reduce((total, item) => total + item.price, 0);
+        return cart.reduce((total, item) => total + item.price * item.quantity, 0);
     }
 
     // Функция для обновления количества товаров в корзине
