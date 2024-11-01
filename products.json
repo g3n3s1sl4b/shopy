@@ -1,32 +1,56 @@
 [
   {
-      "id": 1,
-      "name": "Товар 1",
-      "price": 100.00,
-      "rating": 4.5,
-      "votes": 10,
-      "image": "catalog/1.png", 
-      "discount": 10, 
-      "onSale": true 
+    "id": 1,
+    "name": "Товар 1",
+    "price": 100,
+    "rating": 4.363636363636363,
+    "votes": 11,
+    "image": "catalog/1.png",
+    "discount": 10,
+    "sku": 123456,
+    "brand": "KMIZ",
+    "serial": "120.140",
+    "onSale": true,
+    "attributes": {
+      "a": 1,
+      "b": 2,
+      "c": 3
+    }
   },
   {
-      "id": 2,
-      "name": "Товар 2",
-      "price": 200.00,
-      "rating": 4.0,
-      "votes": 5,
-      "image": "catalog/2.png",
-      "discount": null, 
-      "onSale": false 
+    "id": 2,
+    "name": "Товар 2",
+    "price": 200,
+    "rating": 4.363636363636363,
+    "votes": 11,
+    "image": "catalog/2.png",
+    "discount": 10,
+    "sku": 123456,
+    "brand": "KMIZ",
+    "serial": "120.140",
+    "onSale": true,
+    "attributes": {
+      "a": 1,
+      "b": 2,
+      "c": 3
+    }
   },
   {
     "id": 3,
-    "name": "Товар 2",
-    "price": 200.00,
-    "rating": 4.0,
-    "votes": 5,
+    "name": "Товар 3",
+    "price": 300,
+    "rating": 4.545454545454546,
+    "votes": 11,
     "image": "catalog/3.png",
-    "discount": null, 
-    "onSale": false 
-}
+    "discount": 10,
+    "sku": 123456,
+    "brand": "KMIZ",
+    "serial": "120.140",
+    "onSale": true,
+    "attributes": {
+      "a": 1,
+      "b": 2,
+      "c": 3
+    }
+  }
 ]
