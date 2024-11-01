@@ -1,23 +1,32 @@
 [
   {
-    "id": 1,
-    "name": "Product 1",
-    "rating": 2.1666666666666665,
-    "votes": 6,
-    "price": 5
+      "id": 1,
+      "name": "Товар 1",
+      "price": 100.00,
+      "rating": 4.5,
+      "votes": 10,
+      "image": "catalog/1.png", 
+      "discount": 10, 
+      "onSale": true 
   },
   {
-    "id": 2,
-    "name": "Product 2",
-    "rating": 2.625,
-    "votes": 8,
-    "price": 10
+      "id": 2,
+      "name": "Товар 2",
+      "price": 200.00,
+      "rating": 4.0,
+      "votes": 5,
+      "image": "catalog/2.png",
+      "discount": null, 
+      "onSale": false 
   },
   {
     "id": 3,
-    "name": "Product 3",
-    "rating": 2.8333333333333335,
-    "votes": 6,
-    "price": 15
-  }
+    "name": "Товар 2",
+    "price": 200.00,
+    "rating": 4.0,
+    "votes": 5,
+    "image": "catalog/3.png",
+    "discount": null, 
+    "onSale": false 
+}
 ]
