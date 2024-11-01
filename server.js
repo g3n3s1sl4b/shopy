@@ -72,7 +72,8 @@ const db = new sqlite3.Database('./orders.db', (err) => {
 app.get('/api/products/:id', (req, res) => {
     const { id } = req.params;
     const products = loadProducts();
-    const product = products.find(p => p.id === id);
+    // TODO: Why Number(id), Is it String ?
+    const product = products.find(p => p.id === Number(id));
     if (product) {
         res.json(product);
     } else {

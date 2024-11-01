@@ -220,7 +220,6 @@ $(document).ready(function () {
       success: function (response) {
           console.log('Спасибо за ваш голос!');
           alert('Спасибо за ваш голос!');
-          err.responseText
           $star.parent().find('.star').removeClass('checked');
           $star.prevAll().addBack().addClass('checked');
       },
@@ -233,7 +232,6 @@ $(document).ready(function () {
 
   }
 
-
   // Функция для отрисовки звездочек на основе рейтинга
   function renderStars(rating) {
     let starsHtml = ''; // Инициализация строки для звезд
@@ -243,7 +241,6 @@ $(document).ready(function () {
     return starsHtml; // Возвращаем строку с HTML-кодом звезд
 }
 
-
   // Функция для отображения характеристик товара
   function showProductAttributes(productId) {
     $.get(`${PRODUCT_URL}/${productId}`)
@@ -251,16 +248,16 @@ $(document).ready(function () {
         const product = data;
         let attributesHtml = '<table class="table table-striped">';
         attributesHtml += `<thead>
-                                     <tr>
-                                        <th>Характеристика</th>
-                                        <th>Значение</th>
-                                     </tr>
-                                   </thead><tbody>`;
+        <tr>
+        <th>Характеристика</th>
+        <th>Значение</th>
+        </tr>
+        </thead><tbody>`;
         for (const [key, value] of Object.entries(product.attributes)) {
           attributesHtml += `<tr>
-                                         <td>${key}</td>
-                                         <td>${value}</td>
-                                       </tr>`;
+        <td>${key}</td>
+        <td>${value}</td>
+        </tr>`;
         }
         attributesHtml += "</tbody></table>";
 
