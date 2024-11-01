@@ -1,56 +1,19 @@
 [
   {
     "id": "1",
-    "name": "Ноутбук Asus",
-    "brand": "Asus",
+    "name": "Item",
+    "brand": "KMIZ",
     "sku": "123456",
     "serial": "A1234567890",
-    "price": 599.99,
+    "price": 3.99,
     "discount": 10,
     "onSale": true,
     "image": "catalog/1.png",
-    "rating": 4.5,
+    "rating": 4,
     "votes": 1,
     "attributes": {
-        "цвет": "черный",
-        "размер экрана": "15.6 дюймов",
-        "оперативная память": "8 ГБ"
+        "Size": "Long",
+        "Dim": 15
     }
-},
-{
-  "id": "2",
-  "name": "Ноутбук Asus",
-  "brand": "Asus",
-  "sku": "123456",
-  "serial": "A1234567890",
-  "price": 599.99,
-  "discount": 10,
-  "onSale": true,
-  "image": "catalog/1.png",
-  "rating": 4,
-  "votes": 2,
-  "attributes": {
-      "цвет": "черный",
-      "размер экрана": "15.6 дюймов",
-      "оперативная память": "8 ГБ"
-  }
-},
-{
-  "id": "3",
-  "name": "Ноутбук Asus",
-  "brand": "Asus",
-  "sku": "123456",
-  "serial": "A1234567890",
-  "price": 599.99,
-  "discount": 10,
-  "onSale": true,
-  "image": "catalog/1.png",
-  "rating": 1,
-  "votes": 1,
-  "attributes": {
-      "цвет": "черный",
-      "размер экрана": "15.6 дюймов",
-      "оперативная память": "8 ГБ"
-  }
 }
 ]

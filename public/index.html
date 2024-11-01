@@ -23,21 +23,14 @@
       crossorigin="anonymous"
     />
 
-    <style>
-      .star {
-        cursor: pointer; /* Устанавливаем курсор в виде указателя при наведении на звезду */
-      }
-
-      .star.checked {
-        color: gold; /* Задаем цвет золотым для проверенных (отмеченных) звезд */
-      }
-    </style>
+    <!-- Подключаем пользовательские стили из внешнего файла -->
+    <link rel="stylesheet" href="styles.css" />
   </head>
 
   <body>
     <div class="container mt-5">
       <!-- Создаем контейнер с верхним отступом -->
-      <h1 class="mb-4">Магазин товаров</h1>
+      <h1 class="mb-5">Магазин товаров</h1>
       <!-- Заголовок страницы -->
 
       <div id="product-list" class="row"></div>
@@ -185,6 +178,8 @@
 
     <!-- Подключаем библиотеку jQuery для упрощения работы с DOM и AJAX -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Подключаем JavaScript библиотеки Bootstrap, включая Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Подключаем внешний файл JavaScript (app.js, basket.js) для обработки логики приложения -->
