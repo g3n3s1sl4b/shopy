@@ -9,8 +9,12 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="container mt-5">
 
+  <div id="spinner" class="spinner-wrapper">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="container mt-5">
 
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
       <strong>Holy guacamole!</strong> Free Delivery from 500 USD.
@@ -227,11 +231,16 @@
       </div>
     </div>
 
-
-    <div id="spinner" class="spinner-wrapper">
-      <div class="spinner"></div>
-    </div>
-
+    <footer class="py-3 my-4">
+      <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+        <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Home</a></li>
+        <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Features</a></li>
+        <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Pricing</a></li>
+        <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">FAQs</a></li>
+        <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">About</a></li>
+      </ul>
+      <p class="text-center text-body-secondary">&copy; 2024 Company, Inc</p>
+    </footer>
 
     <!-- Подключаем библиотеку jQuery для упрощения работы с DOM и AJAX -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
