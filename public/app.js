@@ -103,27 +103,30 @@ $(document).ready(function () {
     }
 
     function displayProducts(products) {
-        $('#product-list').empty(); // Очищаем список продуктов перед добавлением новых
+        $('#product-list').empty(); 
         products.forEach(product => {
             const discountBadge = product.discount ? `<span class="badge bg-success position-absolute top-0 end-0 m-2">Скидка: ${product.discount}%</span>` : '';
             const saleBadge = product.onSale ? `<span class="badge bg-danger position-absolute top-0 start-0 m-2">Распродажа</span>` : '';
     
             const productHtml = `
-                <div class="col-md-4 position-relative"> <!-- Оборачиваем с классом для позиционирования бейджей -->
+                <div class="col-md-4 position-relative">
                     <div class="card mb-4 shadow-sm text-center">
                         <img src="${product.image}" class="card-img-top" alt="${product.name}" style="object-fit: cover; height: 200px;">
-                        ${discountBadge} ${saleBadge} <!-- Выводим бейджи над изображением -->
+                        ${discountBadge} ${saleBadge}
                         <div class="card-body">
                             <h5 class="card-title">${product.name}</h5>
+                            <h6 class="brand-name">Бренд: ${product.brand}</h6>
+                            <p>Артикул: ${product.sku}</p>
+                            <p>Серийный номер: ${product.serial}</p>
                             <h3 class="card-price">${product.price.toFixed(2)}</h3>
                             <div class="card-text">
                                 ${renderStars(product.rating)}
                                 <span> (${product.votes})</span>
                             </div>
                             <div class="input-group mb-3">
-                                <button class="btn btn-outline-secondary decrement">−</button>
-                                <input type="number" class="form-control" value="1" min="1" style="width: 60px;">
-                                <button class="btn btn-outline-secondary increment">+</button>
+                                <button class="btn btn-outline-secondary change-quantity decrement">−</button>
+                                <input type="number" class="form-control product-quantity" value="1" min="1" style="width: 60px;">
+                                <button class="btn btn-outline-secondary change-quantity increment">+</button>
                             </div>
                             <button data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" class="btn btn-primary add-to-cart">Добавить в корзину</button>
                         </div>
