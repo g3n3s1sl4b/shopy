@@ -1,14 +1,14 @@
 [
   {
     "id": 1,
-    "name": "Item",
+    "name": "Item 1",
     "brand": "KMIZ",
     "sku": "123456",
     "serial": "A1234567890",
     "price": 3.99,
     "discount": 10,
     "onSale": true,
-    "image": "catalog/1.png",
+    "image": "catalog/item.png",
     "rating": 3,
     "votes": 3,
     "attributes": {
@@ -18,14 +18,31 @@
   },
   {
     "id": 2,
-    "name": "Item",
+    "name": "Item 2",
     "brand": "KMIZ",
     "sku": "123456",
     "serial": "A1234567890",
     "price": 3.99,
     "discount": 10,
     "onSale": true,
-    "image": "catalog/1.png",
+    "image": "catalog/item.png",
+    "rating": 2.5,
+    "votes": 4,
+    "attributes": {
+      "Size": "Long",
+      "Dim": 200
+    }
+  },
+  {
+    "id": 3,
+    "name": "Item 3",
+    "brand": "KMIZ",
+    "sku": "123456",
+    "serial": "A1234567890",
+    "price": 3.99,
+    "discount": 10,
+    "onSale": true,
+    "image": "catalog/item.png",
     "rating": 2.5,
     "votes": 4,
     "attributes": {

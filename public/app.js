@@ -127,7 +127,7 @@ $(document).ready(function () {
                            product.image
                          }" class="card-img-top product-image" alt="${
         product.name
-      }" style="object-fit: cover; height: 200px; border-top-left-radius: 15px; border-top-right-radius: 15px;" data-id="${
+      }" style="object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px;" data-id="${
         product.id
       }">
                         ${discountBadge} ${saleBadge}
