@@ -80,6 +80,25 @@ app.post('/api/place-order', (req, res) => {
     });
 });
 
+// Функция для загрузки продуктов из JSON файла
+const loadProducts = () => {
+    const data = fs.readFileSync('products.json');
+    return JSON.parse(data);
+};
+
+// Эндпоинт для получения характеристик продукта
+app.get('/api/products/:id', (req, res) => {
+    const { id } = req.params;
+    const products = loadProducts();
+    const product = products.find(p => p.id === id);
+    if (product) {
+        console.log(product);
+        res.json(product);
+    } else {
+        res.status(404).send("Продукт не найден.");
+    }
+});
+
 // Обработка GET-запроса для получения списка товаров
 app.get('/api/products', (req, res) => {
     // Чтение файла products.json, содержащего данные о товарах

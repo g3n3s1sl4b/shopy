@@ -153,6 +153,7 @@ $(document).ready(function () {
 
         // Обработчик событий для увеличения изображения товара
         $('.product-image').on('click', function () {
+            console.log("SHOW FOTO");
             const imgSrc = $(this).attr('src');
             $('#image-modal .modal-body img').attr('src', imgSrc);
             const imageModal = new bootstrap.Modal($('#image-modal'));
@@ -228,8 +229,8 @@ $(document).ready(function () {
                 let attributesHtml = '<table class="table table-striped">';
                 attributesHtml += `<thead>
                                      <tr>
-                                         <th>Характеристика</th>
-                                         <th>Значение</th>
+                                        <th>Характеристика</th>
+                                        <th>Значение</th>
                                      </tr>
                                    </thead><tbody>`;
                 for (const [key, value] of Object.entries(product.attributes)) {
