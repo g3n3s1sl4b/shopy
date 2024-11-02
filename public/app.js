@@ -1,8 +1,4 @@
 $(document).ready(function () {
-
-   // Показываем спиннер при загрузке
-   // $("#spinner").show();
-
   // Обновляем количество товаров в корзине при загрузке страницы
   updateCartCount();
 
@@ -10,34 +6,23 @@ $(document).ready(function () {
   const RATE_URL = "/api/rate"; // URL для отправки рейтинга продукта
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-// Показывать и филтровать продукты по категории
-$(".btn-filter").click(function () {
-  // Получаем категорию из кнопки
-  const category = $(this).data("category");
-  // Обновляем URL для фильтрации
-  const url = category ? `${PRODUCT_URL}?category=${category}` : PRODUCT_URL;
-  // Показываем спиннер
-  // $("#spinner").show();
-  // Загружаем отфильтрованные продукты
-  $.get(url)
-    .done(function (data) {
-      console.log("GOT" , data);
-      displayProducts(data);
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-      console.error("Ошибка загрузки продуктов: ", textStatus, errorThrown);
-      alert("Не удалось загрузить продукты. Пожалуйста, попробуйте позже.");
-    })
-    .always(function () {
-      // Скрываем спиннер
-      // $("#spinner").hide();
-    });
-});
+  // Отображение фильтрации продуктов по категории
+  $(".btn-filter").click(function () {
+    const category = $(this).data("category");
+    const url = category ? `${PRODUCT_URL}?category=${category}` : PRODUCT_URL;
 
+    $.get(url)
+      .done(function (data) {
+        console.log("GOT", data);
+        displayProducts(data);
+      })
+      .fail(function (jqXHR, textStatus, errorThrown) {
+        console.error("Ошибка загрузки продуктов: ", textStatus, errorThrown);
+        alert("Не удалось загрузить продукты. Пожалуйста, попробуйте позже.");
+      });
+  });
 
-
-
-  // Загрузка списка продуктов с сервера с обработкой ошибок
+  // Загрузка списка продуктов с сервера
   $.get(PRODUCT_URL)
     .done(function (data) {
       const products = JSON.parse(data);
@@ -46,14 +31,9 @@ $(".btn-filter").click(function () {
     .fail(function (jqXHR, textStatus, errorThrown) {
       console.error("Ошибка загрузки продуктов: ", textStatus, errorThrown);
       alert("Не удалось загрузить продукты. Пожалуйста, попробуйте позже.");
-    })
-    .always(function () {
-      // Скрываем спиннер после завершения загрузки
-      // $("#spinner").hide();
     });
 
   function placeOrder() {
-
     const form = document.getElementById("orderForm");
     const errorMessage = document.getElementById("errorMessage");
     const successMessage = document.getElementById("successMessage");
@@ -88,8 +68,9 @@ $(".btn-filter").click(function () {
           $("#successMessage").text(
             `Заказ ${response.orderId} успешно отправлен!`
           );
-          localStorage.removeItem("cart");
+          // Очищаем корзину
           cart = [];
+          localStorage.setItem("cart", JSON.stringify(cart)); // Обновляем localStorage
           updateCartCount();
           form.reset();
         },
@@ -118,19 +99,11 @@ $(".btn-filter").click(function () {
         totalPrice += item.price * item.quantity;
         cartItems.append(`
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        ${item.name} - ${item.price.toFixed(2)} x ${
-          item.quantity
-        } = ${(item.quantity * item.price.toFixed(2)).toFixed(2)}
+                        ${item.name} - ${item.price.toFixed(2)} x ${item.quantity} = ${(item.quantity * item.price.toFixed(2)).toFixed(2)}
                         <div>
-                            <button data-id="${
-                              item.id
-                            }" class="btn btn-outline-secondary change-quantity increment">+</button>
-                            <button data-id="${
-                              item.id
-                            }" class="btn btn-outline-secondary change-quantity decrement">-</button>
-                            <button data-id="${
-                              item.id
-                            }" class="btn btn-danger remove-item">Удалить</button>
+                            <button data-id="${item.id}" class="btn btn-outline-secondary change-quantity increment">+</button>
+                            <button data-id="${item.id}" class="btn btn-outline-secondary change-quantity decrement">-</button>
+                            <button data-id="${item.id}" class="btn btn-danger remove-item">Удалить</button>
                         </div>
                     </li>
                 `);
@@ -158,52 +131,22 @@ $(".btn-filter").click(function () {
 
       const productHtml = `
                 <div class="col-12 col-md-6 col-lg-4 position-relative">
-                
                     <div class="card mb-4 shadow-sm text-center" style="border-radius: 5px;">
-                         <img src="${
-                           product.image
-                         }" class="card-img-top product-image" alt="${
-        product.name
-      }" style="object-fit: cover; border-top-left-radius: 5px; border-top-right-radius: 5px;" data-id="${
-        product.id
-      }">
+                         <img src="${product.image}" class="card-img-top product-image" alt="${product.name}" style="object-fit: cover; border-top-left-radius: 5px; border-top-right-radius: 5px;" data-id="${product.id}">
                         ${discountBadge} ${saleBadge}
-
-
                         <div class="card-body">
                             <h5 class="card-title">${product.brand} : ${product.name}</h5>
-                            
-                            <h3 class="card-price">${product.price.toFixed(
-                              2
-                            )} $</h3>
-                            
-                            <button data-id="${product.id}" data-name="${
-        product.name
-      }" data-price="${
-        product.price
-      }" class="btn btn-primary add-to-cart">Buy</button>
-                            <button data-id="${
-                              product.id
-                            }" class="btn btn-secondary show-attributes">Spec</button>
+                            <h3 class="card-price">${product.price.toFixed(2)} $</h3>
+                            <button data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" class="btn btn-primary add-to-cart">Buy</button>
+                            <button data-id="${product.id}" class="btn btn-secondary show-attributes">Spec</button>
                         </div>
- <div class="card-footer text-body-secondary">
-                                <div class="card-text">
-                                ${renderStars(product.rating)}
-                                <span class="votes-count">(${
-                                  product.votes
-                                })</span>
-                            </div>
-                      
-  </div>
-
-
+                        <div class="card-footer text-body-secondary">
+                          <div class="card-text">
+                            ${renderStars(product.rating)}
+                            <span class="votes-count">(${product.votes})</span>
+                          </div>
+                        </div>
                     </div>
-
-
-
-
-
-
                 </div>
             `;
       $("#product-list").append(productHtml);
@@ -233,18 +176,15 @@ $(".btn-filter").click(function () {
       const existingProduct = cart.find((item) => item.id === productId);
       if (!existingProduct) {
         cart.push(product);
-        localStorage.setItem("cart", JSON.stringify(cart));
         console.log("Товар добавлен в корзину!");
-        updateCartCount();
-        $button
-          .text("Товар добавлен")
-          .css("background-color", "black")
-          .prop("disabled", true);
       } else {
         existingProduct.quantity += quantity;
-        localStorage.setItem("cart", JSON.stringify(cart));
         console.log("Количество товара обновлено в корзине");
       }
+
+      localStorage.setItem("cart", JSON.stringify(cart)); // Одно обновление localStorage
+      updateCartCount();
+      $button.text("Товар добавлен").css("background-color", "black").prop("disabled", true);
     });
 
     // Обработчик событий для звездочного рейтинга
@@ -274,14 +214,11 @@ $(".btn-filter").click(function () {
   }
 
   function renderStars(rating) {
-    let starsHtml = ""; // Инициализация строки для звезд
+    let starsHtml = ""; 
     for (let i = 1; i <= 5; i++) {
-      // Перебор от 1 до 5 (количество звезд)
-      starsHtml += `<span class="star ${
-        i <= rating ? "checked" : ""
-      }" data-value="${i}">&#9733;</span>`; // Добавляем звездочку с классом 'checked' для уже оцененных
+      starsHtml += `<span class="star ${i <= rating ? "checked" : ""}" data-value="${i}">&#9733;</span>`; 
     }
-    return starsHtml; // Возвращаем строку с HTML-кодом звезд
+    return starsHtml;
   }
 
   function showProductAttributes(productId) {
@@ -308,14 +245,8 @@ $(".btn-filter").click(function () {
         attributesModal.show();
       })
       .fail(function (jqXHR, textStatus, errorThrown) {
-        console.error(
-          "Ошибка загрузки характеристик продукта: ",
-          textStatus,
-          errorThrown
-        );
-        alert(
-          "Не удалось загрузить характеристики. Пожалуйста, попробуйте позже."
-        );
+        console.error("Ошибка загрузки характеристик продукта: ", textStatus, errorThrown);
+        alert("Не удалось загрузить характеристики. Пожалуйста, попробуйте позже.");
       });
   }
 
@@ -350,28 +281,34 @@ $(".btn-filter").click(function () {
   $("#product-list").on("click", ".card-img-top", function () {
     const imgSrc = $(this).attr("src");
     $("#modal-image").attr("src", imgSrc);
-    const imageModal = new bootstrap.Modal(
-      document.getElementById("image-modal")
-    );
+    const imageModal = new bootstrap.Modal(document.getElementById("image-modal"));
     imageModal.show();
   });
 
   $("#cart").on("click", ".change-quantity", function () {
     const id = $(this).data("id");
     const item = cart.find((item) => item.id === id);
+    
+    let changed = false; // Флаг, чтобы отслеживать изменения
+
     if ($(this).hasClass("increment")) {
       item.quantity++;
+      changed = true;
     } else if ($(this).hasClass("decrement") && item.quantity > 1) {
       item.quantity--;
+      changed = true;
     }
-    localStorage.setItem("cart", JSON.stringify(cart));
-    displayCart();
+
+    if (changed) {
+      localStorage.setItem("cart", JSON.stringify(cart)); // Обновляем только при изменении
+      displayCart();
+    }
   });
 
   $("#cart").on("click", ".remove-item", function () {
     const id = $(this).data("id");
     cart = cart.filter((item) => item.id !== id);
-    localStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.setItem("cart", JSON.stringify(cart)); // Обновляем localStorage
     displayCart();
   });
 });
