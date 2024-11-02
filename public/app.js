@@ -114,13 +114,13 @@ $(document).ready(function () {
   }
 
   function displayProducts(products) {
-    $("#product-list").empty();
-
+    let html = ''; // Собираем весь HTML в строку
+  
     products.forEach((product) => {
       const discountBadge = product.discount ? `<span class="badge bg-success position-absolute top-0 end-0 m-2">Скидка: ${product.discount}%</span>` : "";
       const saleBadge = product.onSale ? `<span class="badge bg-danger position-absolute top-0 start-0 m-2">Распродажа</span>` : "";
-
-      const productHtml = `
+  
+      html += `
         <div class="col-12 col-md-6 col-lg-4 position-relative">
           <div class="card mb-4 shadow-sm text-center" style="border-radius: 5px;">
             <img src="${product.image}" class="card-img-top product-image" alt="${product.name}" style="object-fit: cover; border-top-left-radius: 5px; border-top-right-radius: 5px;" data-id="${product.id}">
@@ -140,23 +140,25 @@ $(document).ready(function () {
           </div>
         </div>
       `;
-      $("#product-list").append(productHtml);
     });
-
+  
+    $("#product-list").html(html); // Добавляем весь собранный HTML за один раз
+  
+    // Установка обработчиков событий после вставки HTML
     $(".show-attributes").on("click", function () {
       const productId = $(this).data("id");
       showProductAttributes(productId);
     });
-
+  
     $(".add-to-cart").on("click", function () {
       const $button = $(this);
       const productId = $button.data("id");
       const productName = $button.data("name");
       const productPrice = parseFloat($button.data("price"));
       const quantity = 1;
-
+  
       const product = { id: productId, name: productName, price: productPrice, quantity: quantity };
-
+  
       const existingProduct = cart.find((item) => item.id === productId);
       if (!existingProduct) {
         cart.push(product);
@@ -165,18 +167,18 @@ $(document).ready(function () {
         existingProduct.quantity += quantity;
         console.log("Количество товара обновлено в корзине");
       }
-
+  
       localStorage.setItem("cart", JSON.stringify(cart));
       updateCartCount();
       $button.text("Товар добавлен").css("background-color", "black").prop("disabled", true);
     });
-
+  
     $(".star").on("click", function (e) {
       const $star = $(e.target);
       const productId = $star.closest(".card").find(".add-to-cart").data("id");
       const rating = $star.data("value");
       console.log(productId, rating);
-
+  
       $.ajax({
         url: RATE_URL,
         method: "POST",
