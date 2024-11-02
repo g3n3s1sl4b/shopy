@@ -2,9 +2,16 @@ $(document).ready(function () {
   // Обновляем количество товаров в корзине при загрузке страницы
   updateCartCount();
 
-  const PRODUCT_URL = "/api/products"; // URL для получения списка продуктов
-  const RATE_URL = "/api/rate"; // URL для отправки рейтинга продукта
+  const PRODUCT_URL = "/api/products";
+  const RATE_URL = "/api/rate";
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  // Централизованный обработчик ошибок AJAX
+  function handleAjaxError(jqXHR, textStatus, errorThrown, customMessage) {
+    console.error(`${customMessage}:`, textStatus, errorThrown);
+    const responseMessage = jqXHR.responseJSON?.message || jqXHR.statusText || "Неизвестная ошибка";
+    alert(`${customMessage}: ${responseMessage}`);
+  }
 
   // Отображение фильтрации продуктов по категории
   $(".btn-filter").click(function () {
@@ -12,13 +19,9 @@ $(document).ready(function () {
     const url = category ? `${PRODUCT_URL}?category=${category}` : PRODUCT_URL;
 
     $.get(url)
-      .done(function (data) {
-        console.log("GOT", data);
-        displayProducts(data);
-      })
-      .fail(function (jqXHR, textStatus, errorThrown) {
-        console.error("Ошибка загрузки продуктов: ", textStatus, errorThrown);
-        alert("Не удалось загрузить продукты. Пожалуйста, попробуйте позже.");
+      .done(displayProducts)
+      .fail((jqXHR, textStatus, errorThrown) => {
+        handleAjaxError(jqXHR, textStatus, errorThrown, "Ошибка загрузки продуктов");
       });
   });
 
@@ -28,9 +31,8 @@ $(document).ready(function () {
       const products = JSON.parse(data);
       displayProducts(products);
     })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-      console.error("Ошибка загрузки продуктов: ", textStatus, errorThrown);
-      alert("Не удалось загрузить продукты. Пожалуйста, попробуйте позже.");
+    .fail((jqXHR, textStatus, errorThrown) => {
+      handleAjaxError(jqXHR, textStatus, errorThrown, "Ошибка загрузки продуктов");
     });
 
   function placeOrder() {
@@ -51,8 +53,7 @@ $(document).ready(function () {
     }
 
     if (!validatePhone(phone)) {
-      errorMessage.textContent +=
-        "Неправильный номер телефона. Используйте формат: +1234567890.\n";
+      errorMessage.textContent += "Неправильный номер телефона. Используйте формат: +1234567890.\n";
       valid = false;
     }
 
@@ -65,18 +66,14 @@ $(document).ready(function () {
         contentType: "application/json",
         data: JSON.stringify(orderData),
         success: function (response) {
-          $("#successMessage").text(
-            `Заказ ${response.orderId} успешно отправлен!`
-          );
-          // Очищаем корзину
+          $("#successMessage").text(`Заказ ${response.orderId} успешно отправлен!`);
           cart = [];
-          localStorage.setItem("cart", JSON.stringify(cart)); // Обновляем localStorage
+          localStorage.setItem("cart", JSON.stringify(cart));
           updateCartCount();
           form.reset();
         },
-        error: function (jqXHR) {
-          console.error("Ошибка оформления заказа: ", jqXHR);
-          alert("Ошибка оформления заказа: " + jqXHR.responseText);
+        error: function (jqXHR, textStatus, errorThrown) {
+          handleAjaxError(jqXHR, textStatus, errorThrown, "Ошибка оформления заказа");
         },
       });
     }
@@ -88,9 +85,7 @@ $(document).ready(function () {
     let totalPrice = 0;
 
     if (cart.length === 0) {
-      $("#cart-items").html(
-        `<li class="list-group-item text-center">Корзина пуста!</li>`
-      );
+      cartItems.html(`<li class="list-group-item text-center">Корзина пуста!</li>`);
       $("#place-order").hide();
       $("#orderForm").hide();
       $("#total-price").text("");
@@ -98,15 +93,15 @@ $(document).ready(function () {
       cart.forEach((item) => {
         totalPrice += item.price * item.quantity;
         cartItems.append(`
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        ${item.name} - ${item.price.toFixed(2)} x ${item.quantity} = ${(item.quantity * item.price.toFixed(2)).toFixed(2)}
-                        <div>
-                            <button data-id="${item.id}" class="btn btn-outline-secondary change-quantity increment">+</button>
-                            <button data-id="${item.id}" class="btn btn-outline-secondary change-quantity decrement">-</button>
-                            <button data-id="${item.id}" class="btn btn-danger remove-item">Удалить</button>
-                        </div>
-                    </li>
-                `);
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            ${item.name} - ${item.price.toFixed(2)} x ${item.quantity} = ${(item.quantity * item.price).toFixed(2)}
+            <div>
+              <button data-id="${item.id}" class="btn btn-outline-secondary change-quantity increment">+</button>
+              <button data-id="${item.id}" class="btn btn-outline-secondary change-quantity decrement">-</button>
+              <button data-id="${item.id}" class="btn btn-danger remove-item">Удалить</button>
+            </div>
+          </li>
+        `);
       });
 
       $("#total-price").text(`Всего: ${totalPrice.toFixed(2)}`);
@@ -122,43 +117,37 @@ $(document).ready(function () {
     $("#product-list").empty();
 
     products.forEach((product) => {
-      const discountBadge = product.discount
-        ? `<span class="badge bg-success position-absolute top-0 end-0 m-2">Скидка: ${product.discount}%</span>`
-        : "";
-      const saleBadge = product.onSale
-        ? `<span class="badge bg-danger position-absolute top-0 start-0 m-2">Распродажа</span>`
-        : "";
+      const discountBadge = product.discount ? `<span class="badge bg-success position-absolute top-0 end-0 m-2">Скидка: ${product.discount}%</span>` : "";
+      const saleBadge = product.onSale ? `<span class="badge bg-danger position-absolute top-0 start-0 m-2">Распродажа</span>` : "";
 
       const productHtml = `
-                <div class="col-12 col-md-6 col-lg-4 position-relative">
-                    <div class="card mb-4 shadow-sm text-center" style="border-radius: 5px;">
-                         <img src="${product.image}" class="card-img-top product-image" alt="${product.name}" style="object-fit: cover; border-top-left-radius: 5px; border-top-right-radius: 5px;" data-id="${product.id}">
-                        ${discountBadge} ${saleBadge}
-                        <div class="card-body">
-                            <h5 class="card-title">${product.brand} : ${product.name}</h5>
-                            <h3 class="card-price">${product.price.toFixed(2)} $</h3>
-                            <button data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" class="btn btn-primary add-to-cart">Buy</button>
-                            <button data-id="${product.id}" class="btn btn-secondary show-attributes">Spec</button>
-                        </div>
-                        <div class="card-footer text-body-secondary">
-                          <div class="card-text">
-                            ${renderStars(product.rating)}
-                            <span class="votes-count">(${product.votes})</span>
-                          </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+        <div class="col-12 col-md-6 col-lg-4 position-relative">
+          <div class="card mb-4 shadow-sm text-center" style="border-radius: 5px;">
+            <img src="${product.image}" class="card-img-top product-image" alt="${product.name}" style="object-fit: cover; border-top-left-radius: 5px; border-top-right-radius: 5px;" data-id="${product.id}">
+            ${discountBadge} ${saleBadge}
+            <div class="card-body">
+              <h5 class="card-title">${product.brand} : ${product.name}</h5>
+              <h3 class="card-price">${product.price.toFixed(2)} $</h3>
+              <button data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" class="btn btn-primary add-to-cart">Buy</button>
+              <button data-id="${product.id}" class="btn btn-secondary show-attributes">Spec</button>
+            </div>
+            <div class="card-footer text-body-secondary">
+              <div class="card-text">
+                ${renderStars(product.rating)}
+                <span class="votes-count">(${product.votes})</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
       $("#product-list").append(productHtml);
     });
 
-    // Обработчик событий для кнопки "Характеристики"
     $(".show-attributes").on("click", function () {
       const productId = $(this).data("id");
       showProductAttributes(productId);
     });
 
-    // Обработчик событий для добавления товара в корзину
     $(".add-to-cart").on("click", function () {
       const $button = $(this);
       const productId = $button.data("id");
@@ -166,12 +155,7 @@ $(document).ready(function () {
       const productPrice = parseFloat($button.data("price"));
       const quantity = 1;
 
-      const product = {
-        id: productId,
-        name: productName,
-        price: productPrice,
-        quantity: quantity,
-      };
+      const product = { id: productId, name: productName, price: productPrice, quantity: quantity };
 
       const existingProduct = cart.find((item) => item.id === productId);
       if (!existingProduct) {
@@ -182,18 +166,17 @@ $(document).ready(function () {
         console.log("Количество товара обновлено в корзине");
       }
 
-      localStorage.setItem("cart", JSON.stringify(cart)); // Одно обновление localStorage
+      localStorage.setItem("cart", JSON.stringify(cart));
       updateCartCount();
       $button.text("Товар добавлен").css("background-color", "black").prop("disabled", true);
     });
 
-    // Обработчик событий для звездочного рейтинга
     $(".star").on("click", function (e) {
       const $star = $(e.target);
       const productId = $star.closest(".card").find(".add-to-cart").data("id");
       const rating = $star.data("value");
       console.log(productId, rating);
-      // Отправка рейтинга на сервер
+
       $.ajax({
         url: RATE_URL,
         method: "POST",
@@ -205,9 +188,8 @@ $(document).ready(function () {
           $star.parent().find(".star").removeClass("checked");
           $star.prevAll().addBack().addClass("checked");
         },
-        error: function (err) {
-          console.log("Ошибка при голосовании: " + err.responseText);
-          alert(err.responseText);
+        error: function (jqXHR, textStatus, errorThrown) {
+          handleAjaxError(jqXHR, textStatus, errorThrown, "Ошибка при голосовании");
         },
       });
     });
@@ -227,16 +209,16 @@ $(document).ready(function () {
         const product = data;
         let attributesHtml = '<table class="table table-striped">';
         attributesHtml += `<thead>
-        <tr>
-        <th>Характеристика</th>
-        <th>Значение</th>
-        </tr>
+          <tr>
+            <th>Характеристика</th>
+            <th>Значение</th>
+          </tr>
         </thead><tbody>`;
         for (const [key, value] of Object.entries(product.attributes)) {
           attributesHtml += `<tr>
-        <td>${key}</td>
-        <td>${value}</td>
-        </tr>`;
+            <td>${key}</td>
+            <td>${value}</td>
+          </tr>`;
         }
         attributesHtml += "</tbody></table>";
 
@@ -244,9 +226,8 @@ $(document).ready(function () {
         $("#attributes-modal .modal-body").html(attributesHtml);
         attributesModal.show();
       })
-      .fail(function (jqXHR, textStatus, errorThrown) {
-        console.error("Ошибка загрузки характеристик продукта: ", textStatus, errorThrown);
-        alert("Не удалось загрузить характеристики. Пожалуйста, попробуйте позже.");
+      .fail((jqXHR, textStatus, errorThrown) => {
+        handleAjaxError(jqXHR, textStatus, errorThrown, "Ошибка загрузки характеристик продукта");
       });
   }
 
@@ -289,7 +270,7 @@ $(document).ready(function () {
     const id = $(this).data("id");
     const item = cart.find((item) => item.id === id);
     
-    let changed = false; // Флаг, чтобы отслеживать изменения
+    let changed = false;
 
     if ($(this).hasClass("increment")) {
       item.quantity++;
@@ -300,7 +281,7 @@ $(document).ready(function () {
     }
 
     if (changed) {
-      localStorage.setItem("cart", JSON.stringify(cart)); // Обновляем только при изменении
+      localStorage.setItem("cart", JSON.stringify(cart));
       displayCart();
     }
   });
@@ -308,7 +289,7 @@ $(document).ready(function () {
   $("#cart").on("click", ".remove-item", function () {
     const id = $(this).data("id");
     cart = cart.filter((item) => item.id !== id);
-    localStorage.setItem("cart", JSON.stringify(cart)); // Обновляем localStorage
+    localStorage.setItem("cart", JSON.stringify(cart));
     displayCart();
   });
 });
