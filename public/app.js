@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
    // Показываем спиннер при загрузке
-   $("#spinner").show();
+   // $("#spinner").show();
 
   // Обновляем количество товаров в корзине при загрузке страницы
   updateCartCount();
@@ -10,7 +10,6 @@ $(document).ready(function () {
   const RATE_URL = "/api/rate"; // URL для отправки рейтинга продукта
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-
 // Показывать и филтровать продукты по категории
 $(".btn-filter").click(function () {
   // Получаем категорию из кнопки
@@ -18,7 +17,7 @@ $(".btn-filter").click(function () {
   // Обновляем URL для фильтрации
   const url = category ? `${PRODUCT_URL}?category=${category}` : PRODUCT_URL;
   // Показываем спиннер
-  $("#spinner").show();
+  // $("#spinner").show();
   // Загружаем отфильтрованные продукты
   $.get(url)
     .done(function (data) {
@@ -31,7 +30,7 @@ $(".btn-filter").click(function () {
     })
     .always(function () {
       // Скрываем спиннер
-      $("#spinner").hide();
+      // $("#spinner").hide();
     });
 });
 
@@ -50,10 +49,11 @@ $(".btn-filter").click(function () {
     })
     .always(function () {
       // Скрываем спиннер после завершения загрузки
-      $("#spinner").hide();
+      // $("#spinner").hide();
     });
 
   function placeOrder() {
+
     const form = document.getElementById("orderForm");
     const errorMessage = document.getElementById("errorMessage");
     const successMessage = document.getElementById("successMessage");
@@ -120,7 +120,7 @@ $(".btn-filter").click(function () {
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         ${item.name} - ${item.price.toFixed(2)} x ${
           item.quantity
-        } 
+        } = ${(item.quantity * item.price.toFixed(2)).toFixed(2)}
                         <div>
                             <button data-id="${
                               item.id
